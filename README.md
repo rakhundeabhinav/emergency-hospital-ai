@@ -8,6 +8,28 @@ The backend uses a machine learning model trained on hospital load parameters to
 This project was developed as part of a hackathon to address delays in emergency hospital admissions.
 
 ---
+##  📌 Project Structure: 
+emergency-hospital-ai/
+│
+├── README.md
+│
+├── backend/
+│   │
+│   ├── app.py              # Flask backend (API + routes)
+│   ├── model.py            # ML model training script
+│   ├── model.pkl           # Trained ML model (important)
+│   ├── data.csv            # Dataset used for training
+│   ├── requirements.txt    # Python dependencies
+│   └── realtime_api.py     # (Optional) future real-time data logic
+│
+├── frontend/
+│   │
+│   ├── index.html          # Main UI page
+│   ├── styles.css          # UI styling
+│   └── script.js           # Frontend logic (API calls)
+│
+└── .gitignore              # Ignore unnecessary files
+
 
 ## ▶️ How to Run the Project
 
@@ -53,5 +75,6 @@ frontend/index.html
 
 ## 📜 Note
 The dataset used is simulated for demonstration purposes. The system architecture is scalable and can be integrated with real-time hospital data APIs in the future.
+
 
 
