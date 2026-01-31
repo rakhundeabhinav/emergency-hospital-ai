@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pune Emergency Hospital Finder</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6fb;
+}
+header {
+    background: #0b1c3d;
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+}
+.container {
+    padding: 20px;
+}
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+button {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+button:hover {
+    background: #1d4ed8;
+}
+.card {
+    background: white;
+    padding: 18px;
+    margin-top: 16px;
+    border-radius: 14px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.badge {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+}
+.details {
+    margin-top: 12px;
+    display: none;
+    color: #374151;
+}
+.card.open .details {
+    display: block;
+}
+.row {
+    margin-top: 6px;
+}
+.highlight {
+    color: #dc2626;
+    font-weight: 600;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>🚑 Pune Emergency Hospital Finder</header>
+
+<div class="container">
+
+    <div class="top-bar">
+        <button onclick="getLocation()">📍 Use My Location</button>
+        <button onclick="refresh()">🔄 Refresh</button>
+    </div>
+
+    <div id="list"></div>
+
+</div>
+
+<script>
+let hospitalData = [];
+
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(
+        pos => loadHospitals(pos.coords.latitude, pos.coords.longitude),
+        () => alert("Location permission required")
+    );
+}
+
+function refresh() {
+    if (hospitalData.length === 0) {
+        alert("Please get location first");
+        return;
+    }
+    getLocation();
+}
+
+function loadHospitals(lat, lng) {
+    fetch(`/hospitals?lat=${lat}&lng=${lng}`)
+    .then(res => res.json())
+    .then(data => {
+        hospitalData = data;
+        render();
+    });
+}
+
+function render() {
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    hospitalData.forEach(h => {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        div.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <b>${h.name}</b><br>
+                    ${h.distance} km • ETA ${h.eta} min
+                </div>
+                <div class="badge">${h.predicted_time} min</div>
+            </div>
+
+            <div class="details">
+                <div class="row">Queue Length: ${h.queue}</div>
+                <div class="row">Available Beds: ${h.beds}</div>
+                <div class="row">Doctors Available: ${h.doctors}</div>
+                <div class="row highlight">
+                    AI Predicted Waiting Time: ${h.predicted_time} min
+                </div>
+            </div>
+        `;
+
+        div.onclick = () => div.classList.toggle("open");
+        list.appendChild(div);
+    });
+}
+</script>
+
+</body>
+</html>
